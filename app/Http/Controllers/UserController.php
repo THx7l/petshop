@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+    
     public function login()
     {
 
@@ -82,7 +83,7 @@ class UserController extends Controller
 
     public function registerSubmit(Request $request)
     {
-        // Validação corrigida - use 'username' em vez de 'email'
+        // Ver a validação do username e email TALVEZ TROCAR
         $request->validate([
             'username' => 'required|email|unique:users,username',
             'password' => 'required|min:6|confirmed',
@@ -115,11 +116,11 @@ class UserController extends Controller
         }
     }
 
+
     public function petshop()
     {
-
-        return view('petshop');
-
+        $users = User::all();
+        return view('petshop', ['users' => $users]);
     }
 
     public function register()
@@ -129,19 +130,41 @@ class UserController extends Controller
 
     }
 
-    public function list()
-    {
-
+    public function destroy()
+{
+    // Obter o usuário da sessão
+    $userId = session('user.id');
+    
+    if (!$userId) {
+        return redirect()->route('login')
+            ->with('error', 'Sessão expirada. Faça login novamente.');
     }
-    public function delete()
-    {
 
+    try {
+        // Encontrar o usuário
+        $user = User::find($userId);
+        
+        if (!$user) {
+            return redirect()->route('login')
+                ->with('error', 'Usuário não encontrado.');
+        }
+
+        // Soft delete do usuário
+        $user->deleted_at = now();
+        $user->save();
+
+        // Limpar a sessão
+        session()->forget('user');
+
+        // Redirecionar para a tela de login com mensagem de sucesso
+        return redirect()->route('login')
+            ->with('success', 'Sua conta foi excluída com sucesso.');
+
+    } catch (\Exception $e) {
+        return redirect()->back()
+            ->with('error', 'Erro ao excluir a conta. Tente novamente.');
     }
-
-    public function edit()
-    {
-
-    }
+}
 
 
 }

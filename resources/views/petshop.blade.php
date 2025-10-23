@@ -7,7 +7,7 @@
 @section('styles')
 <style>
     .content-spacing {
-        margin-top: 40px; /* ← ESPAÇAMENTO ADICIONADO AQUI */
+        margin-top: 40px;
     }
 </style>
 @endsection
@@ -15,11 +15,16 @@
 @section('navbar-actions')
     <a href="{{ route('login') }}" class="btn btn-logout">Logout</a>
     <button class="btn btn-edit">Editar Minha Conta</button>
-    <button class="btn btn-delete">Excluir Minha Conta</button>
+    <button class="btn btn-list" id="btnListAccounts">Listar as contas</button>
+    <form action="{{ route('users.delete') }}" method="POST" style="display: inline;">
+        @csrf
+        @method('DELETE')
+        <button type="submit" class="btn btn-delete" onclick="return confirm('Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita.')">Excluir Minha Conta</button>
+    </form>
 @endsection
 
 @section('content')
-<div class="content-spacing"> <!-- ← DIV ADICIONADA AQUI -->
+<div class="content-spacing">
     <section class="welcome-section">
         <h1>Bem-vindo ao Petshop</h1>
         <p>Gerencie seus animais de estimação de forma fácil e rápida</p>
@@ -39,4 +44,57 @@
         </div>
     </section>
 </div>
+
+<!-- MODAL PARA LISTAR CONTAS -->
+<div class="modal-overlay" id="accountsModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Lista de Contas</h2>
+            <button class="close-modal" id="closeModal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="table-container">
+                <table class="accounts-table">
+                    <thead>
+                        <tr>
+                            <th class="id-column">ID</th>
+                            <th class="username-column">E-mail</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($users as $user)
+                        <tr>
+                            <td class="id-column">{{ $user->id }}</td>
+                            <td class="username-column">{{ $user->username }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+
+@section('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const btnListAccounts = document.getElementById('btnListAccounts');
+        const accountsModal = document.getElementById('accountsModal');
+        const closeModal = document.getElementById('closeModal');
+        
+        // Abrir modal
+        btnListAccounts.addEventListener('click', function() {
+            accountsModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        });
+        
+        // Fechar modal
+        closeModal.addEventListener('click', function() {
+            accountsModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        });
+        
+    });
+</script>
 @endsection
