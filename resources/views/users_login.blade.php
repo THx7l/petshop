@@ -18,7 +18,7 @@
 
         .container-login {
             margin-top: 30px;
-            /* ← ESPAÇAMENTO ADICIONADO AQUI */
+
         }
     </style>
 @endsection
@@ -27,7 +27,6 @@
     <nav class="navbar">
         <img src="{{ asset('assets/images/logo.png') }}" alt="Logo PetShop" class="logo-small">
         <div class="user-actions">
-            <!-- Vazio - sem botões -->
         </div>
     </nav>
 @endsection

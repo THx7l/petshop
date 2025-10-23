@@ -14,19 +14,15 @@ class AuthController extends Controller
     }
 
     public function loginSubmit(Request $request){
-        // Obtendo dados do request
-        // dd($request);
 
         $request->validate([
             'text_username' => 'required|email',
             'text_password' => 'required|min:6|max:12',
         ],
         [
-            //Mensagem para text_username
             'text_username.required' => 'O campo de e-mail é obrigatório',
             'text_username.email' => 'O campo de e-mail deve conter um endereço válido',
 
-            //Mensagem para text_password
             'text_password.required' => 'A senha é obrigatória',
             'text_password.min' => 'A senha deve ter pelo menos :min caracteres',
             'text_password.max' => 'A senha deve ter no máximo :max caracteres',
@@ -52,13 +48,12 @@ class AuthController extends Controller
         // print_r($usuarios);
         // echo '</pre>';
 
-        //Testar se o usuario é válido
         $usuario = User::where('username',$username)
                         ->whereNull('deleted_at')
                         ->first();
         if(!$usuario){
             return redirect()->back()
-                ->withInput() //preservar os dados
+                ->withInput()
                 ->with('login_error','Username ou password incorretos.');
         }
         // echo '<pre>';
@@ -71,7 +66,7 @@ class AuthController extends Controller
         }
 
         $usuario->last_login = Date('Y-m-d H:i:s');
-        $usuario->save(); //Atualizando o banco de dados
+        $usuario->save();
 
         session([
             'user' => [

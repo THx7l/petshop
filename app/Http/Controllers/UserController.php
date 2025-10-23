@@ -18,11 +18,8 @@ class UserController extends Controller
     public function logout()
     {
 
-        // return view('login');
-
-      // Remover o usuário da sessão
         session()->forget('user');
-        // Redirecionar para a tela de login
+        // esse que vai pra tela de login
         return redirect()->route('login');
 
     }
@@ -36,11 +33,9 @@ class UserController extends Controller
                 'text_password' => 'required|min:6|max:12',
             ],
             [
-                //Mensagem para text_username
                 'text_username.required' => 'O campo de e-mail é obrigatório',
                 'text_username.email' => 'O campo de e-mail deve conter um endereço válido',
 
-                //Mensagem para text_password
                 'text_password.required' => 'A senha é obrigatória',
                 'text_password.min' => 'A senha deve ter pelo menos :min caracteres',
                 'text_password.max' => 'A senha deve ter no máximo :max caracteres',
@@ -57,7 +52,7 @@ class UserController extends Controller
 
         if (!$user) {
             return redirect()->back()
-                ->withInput() //dados inseridos permaneçam
+                ->withInput()
                 ->with('login_error', 'Username ou password incorretos.');
         }
 
@@ -97,7 +92,6 @@ class UserController extends Controller
         ]);
 
         try {
-            // Criar novo usuário
             $user = new User();
             $user->username = $request->username;
             $user->password = password_hash($request->password, PASSWORD_DEFAULT);
@@ -105,7 +99,6 @@ class UserController extends Controller
             $user->updated_at = now();
             $user->save();
 
-            // Redirecionar com mensagem de sucesso
             return redirect()->route('login')
                 ->with('success', 'Cadastro realizado com sucesso! Faça login para continuar.');
 
@@ -132,7 +125,6 @@ class UserController extends Controller
 
     public function destroy()
 {
-    // Obter o usuário da sessão
     $userId = session('user.id');
     
     if (!$userId) {
@@ -141,22 +133,16 @@ class UserController extends Controller
     }
 
     try {
-        // Encontrar o usuário
         $user = User::find($userId);
         
         if (!$user) {
             return redirect()->route('login')
                 ->with('error', 'Usuário não encontrado.');
         }
-
-        // Soft delete do usuário
         $user->deleted_at = now();
         $user->save();
-
-        // Limpar a sessão
         session()->forget('user');
 
-        // Redirecionar para a tela de login com mensagem de sucesso
         return redirect()->route('login')
             ->with('success', 'Sua conta foi excluída com sucesso.');
 
@@ -182,7 +168,6 @@ public function update(Request $request, $id)
     $user = User::findOrFail($id);
     $user->username = $request->username;
 
-    // só atualiza a senha se o campo não estiver vazio
     if ($request->filled('password')) {
         $user->password = password_hash($request->password, PASSWORD_DEFAULT);
     }
