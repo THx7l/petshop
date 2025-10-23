@@ -166,5 +166,30 @@ class UserController extends Controller
     }
 }
 
+public function edit($id)
+{
+    $user = User::findOrFail($id);
+    return view('users_edit', compact('user'));
+}
+
+public function update(Request $request, $id)
+{
+    $request->validate([
+        'username' => 'required|email',
+        'password' => 'nullable|min:6|confirmed',
+    ]);
+
+    $user = User::findOrFail($id);
+    $user->username = $request->username;
+
+    // só atualiza a senha se o campo não estiver vazio
+    if ($request->filled('password')) {
+        $user->password = password_hash($request->password, PASSWORD_DEFAULT);
+    }
+
+    $user->save();
+
+    return redirect()->route('petshop')->with('success', 'Usuário atualizado com sucesso!');
+}
 
 }

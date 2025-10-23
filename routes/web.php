@@ -28,4 +28,4 @@ Route::get('/logout', [UserController::class, 'logout'])->name('logout');
 Route::get('/', function() {
     return redirect()->route('login');
 });
-// to fazendo isso pra enviar como arquivo to fazendo isso pra enviar como arquivo to fazendo isso pra enviar como arquivo to fazendo isso pra enviar como arquivo to fazendo isso pra enviar como arquivo to fazendo isso pra enviar como arquivo to fazendo isso pra enviar como arquivo to fazendo isso pra enviar como arquivo to fazendo isso pra enviar como arquivo to fazendo isso pra enviar como arquivo
+//to fazendo isso pra enviar como arquivo to fazendo isso pra enviar como arquivo to fazendo isso pra enviar como arquivo to fazendo isso pra enviar como arquivo to fazendo isso pra enviar como arquivo to fazendo isso pra enviar como arquivo to fazendo isso pra enviar como arquivo to fazendo isso pra enviar como arquivo to fazendo isso pra enviar como arquivo to fazendo isso pra enviar como arquivo

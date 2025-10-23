@@ -14,7 +14,7 @@
 
 @section('navbar-actions')
     <a href="{{ route('login') }}" class="btn btn-logout">Logout</a>
-    <button class="btn btn-edit">Editar Minha Conta</button>
+    <a href="{{ route('users.edit', session('user.id')) }}" class="btn btn-edit">Editar Minha Conta</a>
     <button class="btn btn-list" id="btnListAccounts">Listar as contas</button>
     <form action="{{ route('users.delete') }}" method="POST" style="display: inline;">
         @csrf

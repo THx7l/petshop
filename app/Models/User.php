@@ -7,11 +7,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Model
 {
+    use SoftDeletes; // o "use" deve ser minúsculo
+
     protected $fillable = [
-
         'username',
-        'passsword'
-
+        'password'
     ];
-    Use SoftDeletes;
 }
