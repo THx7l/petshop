@@ -29,10 +29,7 @@ use Illuminate\Support\Facades\Route;
 //     Route::get('/users/list', [UserController::class, 'listUsers'])->name('users.list');
 // });
 
-<?php
-
-use App\Http\Controllers\UserController;
-use Illuminate\Support\Facades\Route;
+// <?php>
 
 // Rotas acessíveis apenas para quem **não está logado**
 Route::middleware(['checkisnotlogged'])->group(function () {
