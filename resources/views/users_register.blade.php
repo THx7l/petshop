@@ -24,7 +24,7 @@
 
 @section('navbar')
     <nav class="navbar">
-        <img src="{{ asset('logoPetshop2.png') }}" alt="Logo PetShop" class="logo-small">
+        <img src="{{ asset('assets/images/logo.png') }}" alt="Logo PetShop" class="logo-small">
         <div class="user-actions">
             <!-- Vazio - sem botões -->
         </div>

@@ -18,12 +18,12 @@ class UserController extends Controller
     public function logout()
     {
 
-        return view('login');
+        // return view('login');
 
-        // Remover o usuário da sessão
-        // session()->forget('user');
+      // Remover o usuário da sessão
+        session()->forget('user');
         // Redirecionar para a tela de login
-        // return redirect()->route('login');
+        return redirect()->route('login');
 
     }
 
