@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('username',50)->nullable();
             $table->string('password',200)->nullable();
             $table->dateTime('last_login')->nullable();
-            $table->timestamps(); //created_at updated_at
-            $table->softDeletes(); //deleted_at
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

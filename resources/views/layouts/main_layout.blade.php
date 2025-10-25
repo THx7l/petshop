@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'PetShop - Seu melhor amigo merece o melhor cuidado')</title>
     
-    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <style>
@@ -24,7 +23,6 @@
             flex-direction: column;
         }
 
-        /* NAVIGATION BAR */
         .navbar {
             background-color: #000;
             padding: 15px 30px;
@@ -104,7 +102,6 @@
             color: #7f8c8d;
         }
 
-        /* ACTIONS SECTION */
         .actions-section {
             display: flex;
             justify-content: center;
@@ -144,7 +141,6 @@
             font-size: 16px;
         }
 
-        /* LOGIN SECTION */
         .container-login {
             flex-grow: 1;
             display: flex;
@@ -176,7 +172,6 @@
             max-height: 500px;
         }
 
-        /* FOOTER */
         footer {
             text-align: center;
             padding: 20px 0;
@@ -327,7 +322,6 @@
 </head>
 
 <body class="@yield('body-class', 'bg-light')">
-    <!-- NAVIGATION BAR -->
     @hasSection('navbar')
         @yield('navbar')
     @else
@@ -339,12 +333,10 @@
         </nav>
     @endif
 
-    <!-- MAIN CONTENT -->
     <main class="@yield('main-class', 'container')">
         @yield('content')
     </main>
 
-    <!-- FOOTER -->
     @hasSection('footer')
         @yield('footer')
     @else

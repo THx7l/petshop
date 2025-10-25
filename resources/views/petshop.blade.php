@@ -45,7 +45,6 @@
     </section>
 </div>
 
-<!-- MODAL PARA LISTAR CONTAS -->
 <div class="modal-overlay" id="accountsModal">
     <div class="modal-content">
         <div class="modal-header">
@@ -83,13 +82,11 @@
         const accountsModal = document.getElementById('accountsModal');
         const closeModal = document.getElementById('closeModal');
         
-        // Abrir modal
         btnListAccounts.addEventListener('click', function() {
             accountsModal.style.display = 'flex';
             document.body.style.overflow = 'hidden';
         });
         
-        // Fechar modal
         closeModal.addEventListener('click', function() {
             accountsModal.style.display = 'none';
             document.body.style.overflow = 'auto';
