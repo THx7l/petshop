@@ -1,97 +1,100 @@
-@extends('layouts.main_layout')
-
-@section('title', 'Bem-vindo ao Petshop')
-
-@section('body-class', 'bg-light')
-
-@section('styles')
-<style>
-    .content-spacing {
-        margin-top: 40px;
-    }
-</style>
-@endsection
-
-@section('navbar-actions')
-    <a href="{{ route('login') }}" class="btn btn-logout">Logout</a>
-    <a href="{{ route('users.edit', session('user.id')) }}" class="btn btn-edit">Editar Minha Conta</a>
-    <button class="btn btn-list" id="btnListAccounts">Listar as contas</button>
-    <form action="{{ route('users.delete') }}" method="POST" style="display: inline;">
-        @csrf
-        @method('DELETE')
-        <button type="submit" class="btn btn-delete" onclick="return confirm('Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita.')">Excluir Minha Conta</button>
-    </form>
-@endsection
+@extends('layouts.app')
 
 @section('content')
-<div class="content-spacing">
-    <section class="welcome-section">
-        <h1>Bem-vindo ao Petshop</h1>
-        <p>Gerencie seus animais de estimação de forma fácil e rápida</p>
-    </section>
+<div class="container">
 
-    <section class="actions-section">
-        <div class="action-card">
-            <h3>Cadastrar Animal</h3>
-            <p>Adicione um novo animal ao seu perfil</p>
-            <button class="btn btn-action">Acessar</button>
-        </div>
+    <h2>Meus Pets</h2>
 
-        <div class="action-card">
-            <h3>Ver Meus Animais</h3>
-            <p>Visualize todos os seus animais cadastrados</p>
-            <button class="btn btn-action">Acessar</button>
-        </div>
-    </section>
-</div>
+    {{-- Formulário AJAX --}}
+    <div class="card mb-4">
+        <div class="card-body">
+            <form id="formCreatePet">
+                @csrf
 
-<div class="modal-overlay" id="accountsModal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>Lista de Contas</h2>
-            <button class="close-modal" id="closeModal">&times;</button>
-        </div>
-        <div class="modal-body">
-            <div class="table-container">
-                <table class="accounts-table">
-                    <thead>
-                        <tr>
-                            <th class="id-column">ID</th>
-                            <th class="username-column">E-mail</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($users as $user)
-                        <tr>
-                            <td class="id-column">{{ $user->id }}</td>
-                            <td class="username-column">{{ $user->username }}</td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+                <div class="mb-3">
+                    <label>Nome</label>
+                    <input type="text" name="nome" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <label>Espécie</label>
+                    <input type="text" name="especie" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <label>Raça</label>
+                    <input type="text" name="raca" class="form-control">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Cadastrar Pet</button>
+            </form>
         </div>
     </div>
+
+    {{-- LISTAGEM --}}
+    <h4>Lista de Pets</h4>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Espécie</th>
+                <th>Raça</th>
+            </tr>
+        </thead>
+        <tbody id="petsTableBody">
+
+            @foreach ($pets as $pet)
+                <tr>
+                    <td>{{ $pet->nome }}</td>
+                    <td>{{ $pet->especie }}</td>
+                    <td>{{ $pet->raca }}</td>
+                </tr>
+            @endforeach
+
+        </tbody>
+    </table>
 </div>
 @endsection
 
+
+{{-- 
+==================================================
+🟦  SCRIPT AJAX PARA CADASTRAR PETS
+==================================================
+--}}
 @section('scripts')
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const btnListAccounts = document.getElementById('btnListAccounts');
-        const accountsModal = document.getElementById('accountsModal');
-        const closeModal = document.getElementById('closeModal');
-        
-        btnListAccounts.addEventListener('click', function() {
-            accountsModal.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-        });
-        
-        closeModal.addEventListener('click', function() {
-            accountsModal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        });
-        
-    });
+document.getElementById('formCreatePet').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    let formData = new FormData(this);
+
+    fetch("{{ route('pets.store') }}", {
+        method: "POST",
+        headers: {
+            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+        },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+
+        if (data.status === "success") {
+
+            // Adicionar nova linha na tabela
+            document.getElementById('petsTableBody').innerHTML += `
+                <tr>
+                    <td>${data.pet.nome}</td>
+                    <td>${data.pet.especie}</td>
+                    <td>${data.pet.raca ?? ''}</td>
+                </tr>
+            `;
+
+            // Limpar formulário
+            document.getElementById('formCreatePet').reset();
+        }
+    })
+    .catch(error => console.error("Erro:", error));
+});
 </script>
 @endsection

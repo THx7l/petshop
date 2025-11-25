@@ -18,14 +18,16 @@
     
     .container-login {
         margin-top: 30px;
+        margin-top: 30px; 
     }
 </style>
 @endsection
 
 @section('navbar')
     <nav class="navbar">
-        <img src="{{ asset('logoPetshop2.png') }}" alt="Logo PetShop" class="logo-small">
+        <img src="{{ asset('assets/images/logo.png') }}" alt="Logo PetShop" class="logo-small">
         <div class="user-actions">
+
         </div>
     </nav>
 @endsection

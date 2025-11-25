@@ -13,4 +13,9 @@ class User extends Model
         'username',
         'password'
     ];
+
+    public function pets()
+{
+    return $this->hasMany(Pet::class, 'user_id');
+}
 }
