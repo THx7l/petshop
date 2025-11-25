@@ -34,15 +34,54 @@
         <div class="action-card">
             <h3>Cadastrar Animal</h3>
             <p>Adicione um novo animal ao seu perfil</p>
-            <button class="btn btn-action">Acessar</button>
+            <button class="btn btn-action" onclick="abrirFormulario('cadastrarAnimalForm')">Acessar</button>
         </div>
 
         <div class="action-card">
             <h3>Ver Meus Animais</h3>
             <p>Visualize todos os seus animais cadastrados</p>
-            <button class="btn btn-action">Acessar</button>
+            <button class="btn btn-action" onclick="abrirFormulario('verAnimaisForm')">Acessar</button>
         </div>
     </section>
+</div>
+
+<!-- Popup para Cadastrar Animal -->
+<div class="form-popup" id="cadastrarAnimalForm">
+    <h3>Cadastrar Animal</h3>
+    <form>
+        <div class="form-group">
+            <label for="nomeAnimal">Nome do Animal:</label>
+            <input type="text" id="nomeAnimal" name="nomeAnimal" required>
+        </div>
+        <div class="form-group">
+            <label for="tipoAnimal">Tipo:</label>
+            <select id="tipoAnimal" name="tipoAnimal" required>
+                <option value="">Selecione...</option>
+                <option value="cachorro">Cachorro</option>
+                <option value="gato">Gato</option>
+                <option value="outro">Outro</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="idadeAnimal">Idade:</label>
+            <input type="number" id="idadeAnimal" name="idadeAnimal" min="0" required>
+        </div>
+        <div class="form-actions">
+            <button type="button" class="btn btn-cancel" onclick="fecharFormulario('cadastrarAnimalForm')">Cancelar</button>
+            <button type="submit" class="btn btn-submit">Cadastrar</button>
+        </div>
+    </form>
+</div>
+
+<!-- Popup para Ver Animais -->
+<div class="form-popup" id="verAnimaisForm">
+    <h3>Meus Animais</h3>
+    <div style="text-align: center; padding: 20px;">
+        <p style="font-size: 16px; color: #7f8c8d;">Não existem animais cadastrados</p>
+        <div class="form-actions" style="margin-top: 20px;">
+            <button type="button" class="btn btn-cancel" onclick="fecharFormulario('verAnimaisForm')">Fechar</button>
+        </div>
+    </div>
 </div>
 
 <div class="modal-overlay" id="accountsModal">
@@ -92,6 +131,26 @@
             document.body.style.overflow = 'auto';
         });
         
+    });
+
+    function abrirFormulario(formId) {
+        document.getElementById(formId).style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function fecharFormulario(formId) {
+        document.getElementById(formId).style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+
+    // Fechar popup clicando fora dele
+    document.addEventListener('click', function(event) {
+        const forms = document.querySelectorAll('.form-popup');
+        forms.forEach(form => {
+            if (event.target === form) {
+                fecharFormulario(form.id);
+            }
+        });
     });
 </script>
 @endsection
