@@ -7,15 +7,19 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Model
 {
-    use SoftDeletes; // o "use" deve ser minúsculo
+    use SoftDeletes;
 
     protected $fillable = [
         'username',
-        'password'
+        'password',
+        'last_login'
     ];
 
+    protected $dates = ['deleted_at'];
+
+    // CORREÇÃO: Relação hasMany com Pets
     public function pets()
-{
-    return $this->hasMany(Pet::class, 'user_id');
-}
+    {
+        return $this->hasMany(Pets::class, 'user_id');
+    }
 }

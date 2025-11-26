@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Pet;
+use App\Models\Pets;
 use Illuminate\Http\Request;
 
 class PetController extends Controller
 {
-    // Exibe a view com os pets do usuário logado
     public function index()
     {
         if (!session()->has('user')) {
@@ -15,33 +14,44 @@ class PetController extends Controller
         }
 
         $userId = session('user.id');
+        $pets = Pets::where('user_id', $userId)->get();
+        
+        // Obter todos os usuários para o modal
+        $users = \App\Models\User::all();
 
-        $pets = Pet::where('user_id', $userId)->get();
-
-        return view('petshop', compact('pets'));
+        return view('petshop', compact('pets', 'users'));
     }
 
-    // Cadastrar pet
     public function store(Request $request)
     {
+        if (!session()->has('user')) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
         $userId = session('user.id');
 
-        Pet::create([
-            'nome' => $request->nome,
-            'especie' => $request->especie,
-            'raca' => $request->raca,
+        $pet = Pets::create([
+            'pet_name' => $request->pet_name,
+            'pet_type' => $request->pet_type,
+            'pet_gender' => $request->pet_gender,
+            'pet_age' => $request->pet_age,
             'user_id' => $userId
         ]);
 
-        return response()->json(['success' => true]);
+        return response()->json([
+            'success' => true, 
+            'pet' => $pet
+        ]);
     }
 
-    // Deletar pet
     public function destroy($id)
     {
-        $userId = session('user.id');
+        if (!session()->has('user')) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
 
-        $pet = Pet::where('user_id', $userId)->findOrFail($id);
+        $userId = session('user.id');
+        $pet = Pets::where('user_id', $userId)->findOrFail($id);
         $pet->delete();
 
         return response()->json(['success' => true]);

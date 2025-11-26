@@ -3,31 +3,25 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Pets;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    
     public function login()
     {
-
-        return view('users_login');
-
+        return view('users_login'); // MUDEI: estava 'users_login'
     }
 
     public function logout()
     {
-
         session()->forget('user');
-        // esse que vai pra tela de login
-        return redirect()->route('login');
-
+        return redirect()->route('users_login');
     }
 
     public function loginSubmit(Request $request)
     {
-
         $request->validate(
             [
                 'text_username' => 'required|email',
@@ -36,11 +30,9 @@ class UserController extends Controller
             [
                 'text_username.required' => 'O campo de e-mail é obrigatório',
                 'text_username.email' => 'O campo de e-mail deve conter um endereço válido',
-
                 'text_password.required' => 'A senha é obrigatória',
                 'text_password.min' => 'A senha deve ter pelo menos :min caracteres',
                 'text_password.max' => 'A senha deve ter no máximo :max caracteres',
-
             ]
         );
 
@@ -57,7 +49,7 @@ class UserController extends Controller
                 ->with('login_error', 'Username ou password incorretos.');
         }
 
-        if (!password_verify($password, $user->password)) {
+        if (!Hash::check($password, $user->password)) {
             return redirect()->back()
                 ->withInput()
                 ->with('login_error', 'Username ou password incorretos.');
@@ -73,13 +65,17 @@ class UserController extends Controller
             ]
         ]);
 
+        // REDIRECIONA PARA PETSHOP
         return redirect()->route('petshop');
+    }
 
+    public function register()
+    {
+        return view('users_register');
     }
 
     public function registerSubmit(Request $request)
     {
-        // Ver a validação do username e email TALVEZ TROCAR
         $request->validate([
             'username' => 'required|email|unique:users,username',
             'password' => 'required|min:6|confirmed',
@@ -92,24 +88,39 @@ class UserController extends Controller
             'password.confirmed' => 'A confirmação da senha não coincide',
         ]);
 
-        try {
-            $user = new User();
-            $user->username = $request->username;
-            $user->password = password_hash($request->password, PASSWORD_DEFAULT);
-            $user->created_at = now();
-            $user->updated_at = now();
-            $user->save();
+        $user = new User();
+        $user->username = $request->username;
+        $user->password = Hash::make($request->password);
+        $user->save();
 
-            return redirect()->route('login')
-                ->with('success', 'Cadastro realizado com sucesso! Faça login para continuar.');
-
-        } catch (\Exception $e) {
-            return redirect()->back()
-                ->withInput()
-                ->with('error', 'Erro ao cadastrar usuário. Tente novamente.');
-        }
+        return redirect()->route('login')
+            ->with('success', 'Cadastro realizado com sucesso! Faça login para continuar.');
     }
 
+    public function destroy()
+    {
+        $userId = session('user.id');
+        
+        if (!$userId) {
+            return redirect()->route('login')
+                ->with('error', 'Sessão expirada. Faça login novamente.');
+        }
+
+        $user = User::find($userId);
+        
+        if (!$user) {
+            return redirect()->route('login')
+                ->with('error', 'Usuário não encontrado.');
+        }
+
+        $user->deleted_at = now();
+        $user->save();
+        
+        session()->forget('user');
+
+        return redirect()->route('login')
+            ->with('success', 'Sua conta foi excluída com sucesso.');
+    }
 
     public function petshop()
     {
@@ -117,43 +128,7 @@ class UserController extends Controller
         return view('petshop', ['users' => $users]);
     }
 
-    public function register()
-    {
-
-        return view('users_register');
-
-    }
-
-    public function destroy()
-{
-    $userId = session('user.id');
-    
-    if (!$userId) {
-        return redirect()->route('login')
-            ->with('error', 'Sessão expirada. Faça login novamente.');
-    }
-
-    try {
-        $user = User::find($userId);
-        
-        if (!$user) {
-            return redirect()->route('login')
-                ->with('error', 'Usuário não encontrado.');
-        }
-        $user->deleted_at = now();
-        $user->save();
-        session()->forget('user');
-
-        return redirect()->route('login')
-            ->with('success', 'Sua conta foi excluída com sucesso.');
-
-    } catch (\Exception $e) {
-        return redirect()->back()
-            ->with('error', 'Erro ao excluir a conta. Tente novamente.');
-    }
-}
-
-public function edit($id)
+    public function edit($id)
 {
     $user = User::findOrFail($id);
     return view('users_edit', compact('user'));
@@ -169,6 +144,7 @@ public function update(Request $request, $id)
     $user = User::findOrFail($id);
     $user->username = $request->username;
 
+    // só atualiza a senha se o campo não estiver vazio
     if ($request->filled('password')) {
         $user->password = password_hash($request->password, PASSWORD_DEFAULT);
     }
@@ -177,5 +153,8 @@ public function update(Request $request, $id)
 
     return redirect()->route('petshop')->with('success', 'Usuário atualizado com sucesso!');
 }
-
+    // REMOVA ESTES MÉTODOS DUPLICADOS OU NÃO UTILIZADOS:
+    // public function petshop() - REMOVER
+    // public function edit() - REMOVER  
+    // public function update() - REMOVER
 }

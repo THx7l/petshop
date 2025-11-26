@@ -1,20 +1,27 @@
 <?php
 
-use Illuminate\Database\Eloquent\Model;
-use PhpParser\Builder\Use_;
+namespace App\Models;
 
-class Pet extends Model
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class Pets extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'user_id',
         'pet_name',
-        'pet_gender',
+        'pet_gender', 
         'pet_type',
         'pet_age'
     ];
 
+    protected $dates = ['deleted_at'];
+
+    // CORREÇÃO: Relação belongsTo com User
     public function user()
     {
-        return $this->belongsTo(Use_::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 }
