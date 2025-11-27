@@ -56,4 +56,42 @@ class PetController extends Controller
 
         return response()->json(['success' => true]);
     }
+
+    public function edit($id)
+    {
+        if (!session()->has('user')) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $userId = session('user.id');
+        $pet = Pets::where('user_id', $userId)->findOrFail($id);
+
+        return response()->json([
+            'success' => true,
+            'pet' => $pet
+        ]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        if (!session()->has('user')) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $userId = session('user.id');
+        $pet = Pets::where('user_id', $userId)->findOrFail($id);
+
+        $pet->update([
+            'pet_name' => $request->pet_name,
+            'pet_type' => $request->pet_type,
+            'pet_gender' => $request->pet_gender,
+            'pet_age' => $request->pet_age
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'pet' => $pet
+        ]);
+    }
+
 }

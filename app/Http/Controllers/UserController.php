@@ -11,7 +11,7 @@ class UserController extends Controller
 {
     public function login()
     {
-        return view('users_login'); // MUDEI: estava 'users_login'
+        return view('users_login'); 
     }
 
     public function logout()
@@ -65,7 +65,7 @@ class UserController extends Controller
             ]
         ]);
 
-        // REDIRECIONA PARA PETSHOP
+        //Voltando Petshop talvez, mexer caso nao funcione
         return redirect()->route('petshop');
     }
 
@@ -144,7 +144,7 @@ public function update(Request $request, $id)
     $user = User::findOrFail($id);
     $user->username = $request->username;
 
-    // só atualiza a senha se o campo não estiver vazio
+    // só atualiza a senha se o campo não estiver vazio - PERGUNTAR PRO TH PORQUE
     if ($request->filled('password')) {
         $user->password = password_hash($request->password, PASSWORD_DEFAULT);
     }
@@ -153,8 +153,4 @@ public function update(Request $request, $id)
 
     return redirect()->route('petshop')->with('success', 'Usuário atualizado com sucesso!');
 }
-    // REMOVA ESTES MÉTODOS DUPLICADOS OU NÃO UTILIZADOS:
-    // public function petshop() - REMOVER
-    // public function edit() - REMOVER  
-    // public function update() - REMOVER
 }

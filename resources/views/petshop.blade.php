@@ -34,14 +34,12 @@
         <div class="action-card">
             <h3>Cadastrar Animal</h3>
             <p>Adicione um novo animal ao seu perfil</p>
-            <button class="btn btn-action">Acessar</button>
             <button class="btn btn-action" onclick="abrirFormulario('cadastrarAnimalForm')">Acessar</button>
         </div>
 
         <div class="action-card">
             <h3>Ver Meus Animais</h3>
             <p>Visualize todos os seus animais cadastrados</p>
-            <button class="btn btn-action">Acessar</button>
             <button class="btn btn-action" onclick="abrirFormulario('verAnimaisForm')">Acessar</button>
         </div>
     </section>
@@ -98,6 +96,8 @@
                         <p>Tipo: {{ ucfirst($pet->pet_type) }} | Sexo: {{ ucfirst($pet->pet_gender) }} | Idade: {{ $pet->pet_age }} anos</p>
                     </div>
                     <div class="account-actions">
+                        <!-- BOTÃO EDITAR ADICIONADO -->
+                        <button class="btn btn-edit btn-small" onclick="editarAnimal({{ $pet->id }})">Editar</button>
                         <button class="btn btn-delete btn-small" onclick="excluirAnimal({{ $pet->id }})">Excluir</button>
                     </div>
                 </div>
@@ -113,7 +113,46 @@
     </div>
 </div>
 
-
+<!-- Popup para Editar Animal -->
+<div class="form-popup" id="editarAnimalForm">
+    <h3>Editar Animal</h3>
+    <form id="formEditarAnimal" method="POST">
+        @csrf
+        @method('PUT')
+        <input type="hidden" id="edit_pet_id" name="pet_id">
+        <div class="form-group">
+            <label for="edit_pet_name">Nome do Animal:</label>
+            <input type="text" id="edit_pet_name" name="pet_name" required>
+        </div>
+        <div class="form-group">
+            <label for="edit_pet_type">Tipo:</label>
+            <select id="edit_pet_type" name="pet_type" required>
+                <option value="">Selecione...</option>
+                <option value="cachorro">Cachorro</option>
+                <option value="gato">Gato</option>
+                <option value="pássaro">Pássaro</option>
+                <option value="peixe">Peixe</option>
+                <option value="outro">Outro</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="edit_pet_gender">Sexo:</label>
+            <select id="edit_pet_gender" name="pet_gender" required>
+                <option value="">Selecione...</option>
+                <option value="macho">Macho</option>
+                <option value="fêmea">Fêmea</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="edit_pet_age">Idade (anos):</label>
+            <input type="number" id="edit_pet_age" name="pet_age" min="0" max="50" required>
+        </div>
+        <div class="form-actions">
+            <button type="button" class="btn btn-cancel" onclick="fecharFormulario('editarAnimalForm')">Cancelar</button>
+            <button type="submit" class="btn btn-submit">Salvar Alterações</button>
+        </div>
+    </form>
+</div>
 
 <div class="modal-overlay" id="accountsModal">
     <div class="modal-content">
@@ -152,6 +191,7 @@
         const accountsModal = document.getElementById('accountsModal');
         const closeModal = document.getElementById('closeModal');
         const formCadastrarAnimal = document.getElementById('formCadastrarAnimal');
+        const formEditarAnimal = document.getElementById('formEditarAnimal');
         
         btnListAccounts.addEventListener('click', function() {
             accountsModal.style.display = 'flex';
@@ -168,6 +208,14 @@
             formCadastrarAnimal.addEventListener('submit', function(e) {
                 e.preventDefault();
                 cadastrarAnimal(this);
+            });
+        }
+
+        // Submissão do formulário de edição de animal
+        if (formEditarAnimal) {
+            formEditarAnimal.addEventListener('submit', function(e) {
+                e.preventDefault();
+                atualizarAnimal(this);
             });
         }
     });
@@ -206,6 +254,67 @@
         .catch(error => {
             console.error('Erro:', error);
             alert('Erro ao cadastrar animal.');
+        });
+    }
+
+    function editarAnimal(petId) {
+        // Buscar dados do animal via AJAX
+        fetch(`/pets/${petId}/edit`, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const pet = data.pet;
+                
+                // Preencher o formulário com os dados do animal
+                document.getElementById('edit_pet_id').value = pet.id;
+                document.getElementById('edit_pet_name').value = pet.pet_name;
+                document.getElementById('edit_pet_type').value = pet.pet_type;
+                document.getElementById('edit_pet_gender').value = pet.pet_gender;
+                document.getElementById('edit_pet_age').value = pet.pet_age;
+                
+                // Configurar a action do formulário
+                document.getElementById('formEditarAnimal').action = `/pets/${pet.id}`;
+                
+                // Abrir o pop-up de edição
+                abrirFormulario('editarAnimalForm');
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            alert('Erro ao carregar dados do animal.');
+        });
+    }
+
+    function atualizarAnimal(form) {
+        const formData = new FormData(form);
+        const petId = document.getElementById('edit_pet_id').value;
+        
+        fetch(form.action, {
+            method: 'POST', // Usar POST para simular PUT
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Animal atualizado com sucesso!');
+                fecharFormulario('editarAnimalForm');
+                // Recarregar a página para atualizar a lista
+                window.location.reload();
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            alert('Erro ao atualizar animal.');
         });
     }
 

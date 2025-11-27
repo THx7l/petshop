@@ -17,7 +17,7 @@ class User extends Model
 
     protected $dates = ['deleted_at'];
 
-    // CORREÇÃO: Relação hasMany com Pets
+    //porque o has many e nao o belongs to?
     public function pets()
     {
         return $this->hasMany(Pets::class, 'user_id');

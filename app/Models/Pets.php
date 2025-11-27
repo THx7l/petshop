@@ -19,7 +19,7 @@ class Pets extends Model
 
     protected $dates = ['deleted_at'];
 
-    // CORREÇÃO: Relação belongsTo com User
+    //Relação belongsTo com User, porque precisa dela aqui?
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
